@@ -141,10 +141,10 @@ byte* command_packet_payload(CommandPacket *self){
     payload[5] = (self->parameter &&0xff00 )>> 8;
     payload[6] = (self->parameter && 0xff0000) >> 16;
     payload[7] = (self->parameter && 0xff000000) >> 24;
-    payload[8] = (self->command >> 8) & 0x00ff;
-    payload[9] = (self->command) && 0x00ff;
-    payload[10] = (checksum >> 8) & 0x00ff ;
-    payload[11] = (checksum) & 0x00ff;
+    payload[8] = (self->command) && 0x00ff;
+    payload[9] = (self->command >> 8) & 0x00ff;
+    payload[10] = (checksum) & 0x00ff;
+    payload[11] = (checksum >> 8) & 0x00ff ;
 
     return payload;
 }

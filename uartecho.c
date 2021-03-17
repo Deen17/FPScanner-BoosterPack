@@ -82,7 +82,7 @@ void *mainThread(void *arg0)
     uartParams.writeDataMode = UART_DATA_BINARY;
     uartParams.readDataMode = UART_DATA_BINARY;
     uartParams.readReturnMode = UART_RETURN_FULL;
-    uartParams.baudRate = 115200;
+    uartParams.baudRate = 9600; // fingerprint scanner baud rate
 
     uart = UART_open(CONFIG_UART_0, &uartParams);
 

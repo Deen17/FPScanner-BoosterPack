@@ -5,6 +5,14 @@
 #ifndef FPS_HEADER
 #define FPS_HEADER
 
+#ifndef TI_UART
+#define TI_UART
+#include <ti/drivers/UART.h>
+#endif
+
+#define COMMAND_PACKET_SIZE 12
+#define RESPONSE_PACKET_SIZE 12
+
 typedef unsigned char byte;
 typedef unsigned short word;
 typedef unsigned long dword;
@@ -122,12 +130,16 @@ byte* command_packet_payload(CommandPacket *self);
 
 typedef struct RES_PKT
 {
+    word start_code;
+    word device_id;
     dword parameter;
     word response;
+    word checksum;
 } ResponsePacket;
 
 ResponsePacket new_response_packet(byte* buf);
-word res_checksum(ResponsePacket *self);
+int isAck(ResponsePacket *res);
+int expected_checksum(dword parameter, word response);
 
 // Data Packet
 
@@ -139,6 +151,14 @@ typedef struct DATA_PACKET
 
 DataPacket data_packet(byte *buf, int size);
 word data_checksum(DataPacket *self);
+
+
+// FPS UART commands
+int fps_open(UART_Handle handle);
+int fps_close(UART_Handle handle);
+int _fps_led(UART_Handle handle, unsigned int i);
+int fps_led_on(UART_Handle handle);
+int fps_led_off(UART_Handle handle);
 
 #endif
 
