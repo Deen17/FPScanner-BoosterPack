@@ -27,5 +27,5 @@ int isAck(ResponsePacket *res){
 }
 
 int expected_checksum(dword parameter, word response){
-    return 255 + parameter + response;
+    return 256 + parameter + response; // 0x55 + 0xaa + 0x1 + parameter + response code
 }

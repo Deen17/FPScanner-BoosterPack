@@ -68,9 +68,10 @@ void *mainThread(void *arg0)
     GPIO_init();
     UART_init();
 
-    /* Configure the LED pin */
-    GPIO_setConfig(CONFIG_GPIO_LED_0, GPIO_CFG_OUT_STD | GPIO_CFG_OUT_LOW);
+    sleep(3);
 
+    /* Configure the LED pin */
+    GPIO_setConfig(CONFIG_GPIO_LED_0, GPIO_CFG_OUT_STD | GPIO_CFG_OUT_HIGH);
     /* Create a UART with data processing off. */
     UART_Params_init(&uartParams);
     uartParams.writeDataMode = UART_DATA_BINARY;
@@ -92,9 +93,9 @@ void *mainThread(void *arg0)
     int success=0;
     while (success == 0){
         success = fps_led_on(uart);
-        sleep(1000);
+        sleep(1);
         success = fps_led_off(uart);
-        sleep(1000);
+        sleep(1);
     }
 
 
