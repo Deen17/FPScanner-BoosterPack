@@ -49,15 +49,9 @@
 /* Fingerprint Scanner Packet library */
 #include <fps.h>
 
+// Timer for sleep
+#include <ti/drivers/Timer.h>
 
-void print_bytes(byte* arr, int size){
-    int i;
-    System_printf("arr: ");
-    for(i = 0; i < size; i++){
-        System_printf("%X", arr[i]);
-    }
-    System_printf("\n");
-}
 
 
 /*
@@ -65,8 +59,8 @@ void print_bytes(byte* arr, int size){
  */
 void *mainThread(void *arg0)
 {
-    char        input;
-    const char  echoPrompt[] = "Echoing characters:\r\n";
+//    char        input;
+//    const char  echoPrompt[] = "Echoing characters:\r\n";
     UART_Handle uart;
     UART_Params uartParams;
 
@@ -91,21 +85,45 @@ void *mainThread(void *arg0)
         while (1);
     }
 
+    if (fps_open(uart) == -1){
+        return(-1);
+    }
+
+    int success=0;
+    while (success == 0){
+        success = fps_led_on(uart);
+        sleep(1000);
+        success = fps_led_off(uart);
+        sleep(1000);
+    }
+
+
     /* Turn on user LED to indicate successful initialization */
-    GPIO_write(CONFIG_GPIO_LED_0, CONFIG_GPIO_LED_ON);
-
-    UART_write(uart, echoPrompt, sizeof(echoPrompt));
-
-    CommandPacket pkt = open_cmd(0);
-    byte* arr = command_packet_payload(&pkt);
-    print_bytes(arr, 12);
-    free(arr);
-
-    return 0;
-
-//    /* Loop forever echoing */
-//    while (1) {
-//        UART_read(uart, &input, 1);
-//        UART_write(uart, &input, 1);
-//    }
+//    GPIO_write(CONFIG_GPIO_LED_0, CONFIG_GPIO_LED_ON);
+//
+//    UART_write(uart, echoPrompt, sizeof(echoPrompt));
+//
+//    CommandPacket pkt = open_cmd(0);
+//    byte* arr = command_packet_payload(&pkt);
+//    print_bytes(arr, 12);
+//    free(arr);
+//
+//    return 0;
+//
+////    /* Loop forever echoing */
+////    while (1) {
+////        UART_read(uart, &input, 1);
+////        UART_write(uart, &input, 1);
+////    }
 }
+
+//void print_bytes(byte* arr, int size){
+//    int i;
+//    System_printf("arr: ");
+//    for(i = 0; i < size; i++){
+//        System_printf("%X", arr[i]);
+//    }
+//    System_printf("\n");
+//}
+
+

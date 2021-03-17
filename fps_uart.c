@@ -5,6 +5,10 @@
 #include <ti/drivers/UART.h>
 #endif
 #include "fps.h"
+#ifndef STDLIB
+#define STDLIB
+#include <stdlib.h>
+#endif
 
 /*
  * fps_uart.c

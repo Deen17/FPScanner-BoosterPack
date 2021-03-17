@@ -1,5 +1,8 @@
 #include "fps.h"
+#ifndef STDLIB
+#define STDLIB
 #include <stdlib.h>
+#endif
 
 ResponsePacket new_response_packet(byte *buf){
     ResponsePacket res;
