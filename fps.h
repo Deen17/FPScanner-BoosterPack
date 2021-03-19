@@ -184,6 +184,18 @@ int _fps_led(UART_Handle handle, dword i);
 int fps_led_on(UART_Handle handle);
 int fps_led_off(UART_Handle handle);
 int fps_check_usb(UART_Handle handle);
+int fps_enroll_count(UART_Handle handle);
+int fps_check_enrolled(UART_Handle handle);
+int fps_enroll_start(UART_Handle handle, dword id);
+int fps_enrolln(UART_Handle handle, int n);
+int fps_is_finger_pressed_uart(UART_Handle handle);
+int fps_delete_id(UART_Handle handle, dword id);
+int fps_delete_all(UART_Handle handle);
+int fps_verify(UART_Handle handle, dword id);
+int fps_identify(UART_Handle handle);
+int fps_capture_finger(UART_Handle handle);
+int fps_standby(UART_Handle); // to wake up, send a 0x00 first and wait 20ms (what?)
+
 
 #endif
 
