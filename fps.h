@@ -158,12 +158,20 @@ int expected_checksum(dword parameter, word response);
 //DataPacket data_packet(byte *buf, int size);
 //word data_checksum(DataPacket *self);
 
+
+/*
+ * Struct: devinfo
+ * ---------------
+ * The FPS returns this data after sending an OPEN
+ * command with a nonzero parameter.
+ */
 struct devinfo{
     word data_start_code;
     word device_code;
     dword firmwareVersion;
     dword isoAreaMaxSize;
     byte deviceSerialNumber[16];
+    word checksum;
 };
 
 struct devinfo devinfo_frombytes(byte* arr);
