@@ -68,16 +68,18 @@ void *mainThread(void *arg0)
     GPIO_init();
     UART_init();
 
-    sleep(3);
+    sleep(1);
 
     /* Configure the LED pin */
-    GPIO_setConfig(CONFIG_GPIO_LED_0, GPIO_CFG_OUT_STD | GPIO_CFG_OUT_HIGH);
+    GPIO_setConfig(CONFIG_GPIO_LED_0, GPIO_CFG_OUT_STD | GPIO_CFG_OUT_LOW);
     /* Create a UART with data processing off. */
     UART_Params_init(&uartParams);
     uartParams.writeDataMode = UART_DATA_BINARY;
     uartParams.readDataMode = UART_DATA_BINARY;
     uartParams.readReturnMode = UART_RETURN_FULL;
     uartParams.baudRate = 9600; // fingerprint scanner baud rate
+
+    GPIO_write(CONFIG_GPIO_LED_0, CONFIG_GPIO_LED_ON);
 
     uart = UART_open(CONFIG_UART_0, &uartParams);
 
@@ -86,45 +88,27 @@ void *mainThread(void *arg0)
         while (1);
     }
 
+    GPIO_write(CONFIG_GPIO_LED_0, CONFIG_GPIO_LED_OFF);
     if (fps_open(uart) == -1){
         return(-1);
     }
+    GPIO_write(CONFIG_GPIO_LED_0, CONFIG_GPIO_LED_ON);
+
+    fps_check_usb(uart);
+//    fps_check_usb(uart);
 
     int success=0;
     while (success == 0){
+        GPIO_write(CONFIG_GPIO_LED_0, CONFIG_GPIO_LED_OFF);
         success = fps_led_on(uart);
+        GPIO_write(CONFIG_GPIO_LED_0, CONFIG_GPIO_LED_ON);
         sleep(1);
+        GPIO_write(CONFIG_GPIO_LED_0, CONFIG_GPIO_LED_OFF);
         success = fps_led_off(uart);
+        GPIO_write(CONFIG_GPIO_LED_0, CONFIG_GPIO_LED_ON);
         sleep(1);
     }
 
-
-    /* Turn on user LED to indicate successful initialization */
-//    GPIO_write(CONFIG_GPIO_LED_0, CONFIG_GPIO_LED_ON);
-//
-//    UART_write(uart, echoPrompt, sizeof(echoPrompt));
-//
-//    CommandPacket pkt = open_cmd(0);
-//    byte* arr = command_packet_payload(&pkt);
-//    print_bytes(arr, 12);
-//    free(arr);
-//
-//    return 0;
-//
-////    /* Loop forever echoing */
-////    while (1) {
-////        UART_read(uart, &input, 1);
-////        UART_write(uart, &input, 1);
-////    }
 }
-
-//void print_bytes(byte* arr, int size){
-//    int i;
-//    System_printf("arr: ");
-//    for(i = 0; i < size; i++){
-//        System_printf("%X", arr[i]);
-//    }
-//    System_printf("\n");
-//}
 
 

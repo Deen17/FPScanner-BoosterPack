@@ -15,12 +15,12 @@ word cmd_checksum(CommandPacket *self){
     sum += command_start_code2;
     sum += device_id1;
     sum += device_id2;
-    sum += self->parameter && 0xff;
-    sum += (self->parameter &&0xff00 )>> 8;
-    sum += (self->parameter && 0xff0000) >> 16;
-    sum += (self->parameter && 0xff000000) >> 24;
+    sum += self->parameter & 0xff;
+    sum += (self->parameter &0xff00 )>> 8;
+    sum += (self->parameter & 0xff0000) >> 16;
+    sum += (self->parameter & 0xff000000) >> 24;
     sum += (self->command >> 8) & 0x00ff;
-    sum += (self->command) && 0x00ff;
+    sum += (self->command) & 0x00ff;
 
     return sum;
 }
@@ -137,14 +137,14 @@ byte* command_packet_payload(CommandPacket *self){
     payload[1] = command_start_code2;
     payload[2] = device_id1;
     payload[3] = device_id2;
-    payload[4] = self->parameter && 0xff;
-    payload[5] = (self->parameter &&0xff00 )>> 8;
-    payload[6] = (self->parameter && 0xff0000) >> 16;
-    payload[7] = (self->parameter && 0xff000000) >> 24;
-    payload[8] = (self->command) && 0x00ff;
-    payload[9] = (self->command >> 8) & 0x00ff;
-    payload[10] = (checksum) & 0x00ff;
-    payload[11] = (checksum >> 8) & 0x00ff ;
+    payload[4] = self->parameter & 0xff;
+    payload[5] = (self->parameter &0xff00 )>> 8;
+    payload[6] = (self->parameter & 0xff0000) >> 16;
+    payload[7] = (self->parameter & 0xff000000) >> 24;
+    payload[8] = self->command & 0xff;
+    payload[9] = (self->command & 0xff00) >> 8;
+    payload[10] = (checksum) & 0xff;
+    payload[11] = (checksum & 0xff00) > 8;
 
     return payload;
 }

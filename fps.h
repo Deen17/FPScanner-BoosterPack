@@ -19,6 +19,8 @@ typedef unsigned long dword;
 
 static byte command_start_code1 = 0x55;
 static byte command_start_code2 = 0xaa;
+static byte data_start_code1 = 0x5a;
+static byte data_start_code2 = 0xa5;
 static byte device_id1 = 0x01; // lsB; together, deviceID is 0x0001. the fingerprintscanner is little endian
 static byte device_id2 = 0x00; // msB
 
@@ -141,24 +143,39 @@ ResponsePacket new_response_packet(byte* buf);
 int isAck(ResponsePacket *res);
 int expected_checksum(dword parameter, word response);
 
-// Data Packet
+// Data Packets
 
-typedef struct DATA_PACKET
-{
-    byte *data;
-    unsigned int size;
-} DataPacket;
+//typedef struct DATA_PACKET
+//{
+//    byte start1;
+//    byte start2;
+//    word dev_id;
+//    byte *data;
+//    word checksum;
+//    unsigned int size;
+//} DataPacket;
 
-DataPacket data_packet(byte *buf, int size);
-word data_checksum(DataPacket *self);
+//DataPacket data_packet(byte *buf, int size);
+//word data_checksum(DataPacket *self);
 
+struct devinfo{
+    word data_start_code;
+    word device_code;
+    dword firmwareVersion;
+    dword isoAreaMaxSize;
+    byte deviceSerialNumber[16];
+};
+
+struct devinfo devinfo_frombytes(byte* arr);
 
 // FPS UART commands
+int fps_open_info(UART_Handle handle);
 int fps_open(UART_Handle handle);
 int fps_close(UART_Handle handle);
-int _fps_led(UART_Handle handle, unsigned int i);
+int _fps_led(UART_Handle handle, dword i);
 int fps_led_on(UART_Handle handle);
 int fps_led_off(UART_Handle handle);
+int fps_check_usb(UART_Handle handle);
 
 #endif
 
