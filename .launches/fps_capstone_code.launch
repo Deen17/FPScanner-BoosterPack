@@ -10,7 +10,7 @@
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROGRAM.CC1352R1F3.ccxml.Texas Instruments XDS110 USB Debug Probe/Cortex_M4_0" value="${build_artifact:fps_capstone_code}"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROJECT.CC1352R1F3.ccxml.Texas Instruments XDS110 USB Debug Probe/Cortex_M4_0" value="fps_capstone_code"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_TARGET_CONFIG" value="${target_config_active_default:fps_capstone_code}"/>
-<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.CC1352R1F3.ccxml.Texas Instruments XDS110 USB Debug Probe/Cortex_M4_0" value="C:\Users\adilr\Documents\capstone\code\fps_capstone_code\Debug\fps_capstone_code.out"/>
+<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.CC1352R1F3.ccxml.Texas Instruments XDS110 USB Debug Probe/Cortex_M4_0" value="C:\Users\adilr\git\ccs-fps-gt-521fxx\Debug\fps_capstone_code.out"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/fps_capstone_code"/>
 </listAttribute>

@@ -5,7 +5,7 @@
 /*
  * Function: devinfo_frombytes
  * ---------------------------
- * Constructs a `devinfo struct` from a series of bytes
+ * Constructs a `devinfo` struct from a series of bytes
  *
  * arr: a pointer to a 30-byte array
  *
