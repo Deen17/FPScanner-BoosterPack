@@ -18,6 +18,29 @@
  */
 
 
+//int _req_res(UART_Handle handle, word command, dword id){
+//    CommandPacket pkt = new_command_packet(command,id);
+//    byte* buf = command_packet_payload(&pkt);
+//    int32_t status = UART_write(handle, buf, RESPONSE_PACKET_SIZE);
+//    if (status != COMMAND_PACKET_SIZE) {
+//        free(buf);
+//
+//        return -1;
+//    }
+//    status = UART_read(handle, buf, RESPONSE_PACKET_SIZE);
+//    if (status == RESPONSE_PACKET_SIZE){
+//        ResponsePacket res = new_response_packet(buf);
+//        if (res.response == ACK){
+//            return 0;
+//        }
+//        if(res.response == NACK) return res.response;
+//        return -1;
+//    }
+//    free(buf);
+//    return -1;
+//}
+
+
 /*
  * Function: fps_open_info
  * -------------
@@ -200,55 +223,82 @@ int fps_enroll_count(UART_Handle handle){
     return -1;
 }
 
-int _req_res(UART_Handle handle, word command, dword id){
+result _req_res(UART_Handle handle, word command, dword id){
     CommandPacket pkt = new_command_packet(command,id);
-        byte* buf = command_packet_payload(&pkt);
-        int32_t status = UART_write(handle, buf, RESPONSE_PACKET_SIZE);
-        if (status != COMMAND_PACKET_SIZE) {
-            free(buf);
-            return -1;
-        }
-        status = UART_read(handle, buf, RESPONSE_PACKET_SIZE);
-        if (status == RESPONSE_PACKET_SIZE){
-            ResponsePacket res = new_response_packet(buf);
-            if (res.response == ACK){
-                return 0;
-            }
-            if(res.response == NACK) return res.parameter;
-            return -1;
-        }
+    byte* buf = command_packet_payload(&pkt);
+    result r;
+    int32_t status = UART_write(handle, buf, RESPONSE_PACKET_SIZE);
+    if (status != COMMAND_PACKET_SIZE) {
         free(buf);
-        return -1;
+        r = (result) {0,-1};
+        return r;
+    }
+    status = UART_read(handle, buf, RESPONSE_PACKET_SIZE);
+    if (status == RESPONSE_PACKET_SIZE){
+        ResponsePacket res = new_response_packet(buf);
+        if (res.response == ACK){
+            r = (result) {res.parameter, 0};
+            return r;
+        }
+        if(res.response == NACK) return (result) {res.parameter,-1};
+        return (result) {0,-2};
+    }
+    free(buf);
+    return (result) {0,-3};
 }
 
-int fps_check_enrolled(UART_Handle handle, dword id){
+result fps_check_enrolled(UART_Handle handle, dword id){
     return _req_res(handle, CHECK_ENROLLED, id);
 }
 
-int fps_enroll_start(UART_Handle handle, dword id){
+result fps_enroll_start(UART_Handle handle, dword id){
     return _req_res(handle, ENROLL_START, id);
 }
 
-int fps_enrolln(UART_Handle handle, int n){
+result fps_enrolln(UART_Handle handle, int n){
     switch(n){
     case 1:
         return _req_res(handle, ENROLL1, 0);
     case 2:
         return _req_res(handle, ENROLL2, 0);
     case 3:
-        return _req_res(handle, ENROLL3, 0); //TODO: do this one separately
+        return _req_res(handle, ENROLL3, 0);
     default:
-        return -1;
+        return (result) {0,-4};
     }
 
 }
 
-int fps_is_finger_pressed_uart(UART_Handle handle);
-int fps_delete_id(UART_Handle handle, dword id);
-int fps_delete_all(UART_Handle handle);
-int fps_verify(UART_Handle handle, dword id);
-int fps_identify(UART_Handle handle);
-int fps_capture_finger(UART_Handle handle);
+// returns 1 if finger is pressed, and 0 if not.
+int fps_is_finger_pressed_uart(UART_Handle handle){
+    result r = _req_res(handle, IS_PRESS_FINGER, 0);
+    return r.res == ACK && !r.parameter;
+}
+
+
+result fps_delete_id(UART_Handle handle, dword id){
+    return _req_res(handle, DELETE_ID, id);
+}
+
+
+result fps_delete_all(UART_Handle handle){
+    return _req_res(handle, DELETE_ALL, 0);
+}
+
+result fps_verify(UART_Handle handle, dword id){
+    return _req_res(handle, VERIFY, id);
+}
+
+result fps_identify(UART_Handle handle){
+    return _req_res(handle, IDENTIFY, 0);
+}
+
+// quality 0 = not best image, but fast. use for identification/verification
+// quality nonzero = best image quality, but slow. use for enrollment
+result fps_capture_finger(UART_Handle handle, dword quality){
+    return _req_res(handle, CAPTURE_FINGER, quality);
+}
+
 int fps_standby(UART_Handle);
 
 #endif
