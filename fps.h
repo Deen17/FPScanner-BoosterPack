@@ -10,6 +10,16 @@
 #include <ti/drivers/UART.h>
 #endif
 
+#ifndef TI_DRIVERS_CONFIG
+#define TI_DRIVERS_CONFIG
+#include "ti_drivers_config.h"
+#endif
+
+#ifndef TI_GPIO
+#define TI_GPIO
+#include <ti/drivers/GPIO.h>
+#endif
+
 #define COMMAND_PACKET_SIZE 12
 #define RESPONSE_PACKET_SIZE 12
 
@@ -35,7 +45,7 @@ enum Command_Code
     GET_ENROLL_COUNT = 0X20,
     CHECK_ENROLLED = 0X21,
     ENROLL_START = 0X22,
-    ENROLL1 = 0X22,
+    ENROLL1 = 0X23,
     ENROLL2 = 0X24,
     ENROLL3 = 0X25,
     IS_PRESS_FINGER = 0X26,
@@ -201,6 +211,6 @@ result fps_identify(UART_Handle handle);
 result fps_capture_finger(UART_Handle handle, dword quality);
 int fps_standby(UART_Handle); // to wake up, send a 0x00 first and wait 20ms (what?)
 result _req_res(UART_Handle handle, word command, dword id);
-
+int icpck();
 #endif
 

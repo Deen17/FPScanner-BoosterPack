@@ -1,10 +1,8 @@
 #ifndef FPS_UART
 #define FPS_UART
-#ifndef TI_UART
-#define TI_UART
-#include <ti/drivers/UART.h>
-#endif
+
 #include "fps.h"
+
 #ifndef STDLIB
 #define STDLIB
 #include <stdlib.h>
@@ -272,7 +270,7 @@ result fps_enrolln(UART_Handle handle, int n){
 // returns 1 if finger is pressed, and 0 if not.
 int fps_is_finger_pressed_uart(UART_Handle handle){
     result r = _req_res(handle, IS_PRESS_FINGER, 0);
-    return r.res == ACK && !r.parameter;
+    return r.res == 0 && !r.parameter;
 }
 
 
@@ -300,5 +298,12 @@ result fps_capture_finger(UART_Handle handle, dword quality){
 }
 
 int fps_standby(UART_Handle);
+
+/* returns whether the ICPCK pin is high or not. If the fingerprint scanner
+ * senses a finger is touching the scanner, it returns 1. Otherwise, 0 is returned
+ */
+int icpck(){
+    return GPIO_read(ICPCK);
+}
 
 #endif
