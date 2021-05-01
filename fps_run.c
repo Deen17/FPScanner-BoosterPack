@@ -68,7 +68,7 @@ void *mainThread(void *arg0)
     if (fps_open(uart) == -1){
         return(-1);
     }
-    GPIO_write(CONFIG_GPIO_LED_0, CONFIG_GPIO_LED_ON);
+    //GPIO_write(CONFIG_GPIO_LED_0, CONFIG_GPIO_LED_ON);
 
     // delete db just for testing purposes
     fps_delete_all(uart);
@@ -107,7 +107,7 @@ void *mainThread(void *arg0)
             res = fps_enrolln(uart, 3);
             fps_led_off(uart);
 
-            GPIO_write(LED_GREEN, !res.res);
+            GPIO_write(CONFIG_GPIO_LED_0, !res.res);
             break;
         }
         usleep(POLL_PERIOD);
