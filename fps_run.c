@@ -2,6 +2,9 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+/* for sleep and usleep */
+#include <unistd.h>
+
 /* XDC Module Headers */
 #include <xdc/std.h>
 #include <xdc/runtime/System.h>
@@ -19,7 +22,9 @@
 // Timer for sleep
 #include <ti/drivers/Timer.h>
 
+static useconds_t POLL_PERIOD = 200000;
 
+void waitUntilFingerReplaced(UART_Handle *handle);
 
 /*
  *  ======== mainThread ========
@@ -31,13 +36,15 @@ void *mainThread(void *arg0)
     UART_Handle uart;
     UART_Params uartParams;
 
-    //while(1);
+
 
     /* Call driver init functions */
     GPIO_init();
     UART_init();
 
-    //sleep(1);
+    //while(1);
+
+    usleep(100000);
 
     /* Configure the LED pin */
     GPIO_setConfig(CONFIG_GPIO_LED_0, GPIO_CFG_OUT_STD | GPIO_CFG_OUT_LOW);
@@ -63,37 +70,89 @@ void *mainThread(void *arg0)
     }
     GPIO_write(CONFIG_GPIO_LED_0, CONFIG_GPIO_LED_ON);
 
-
-    fps_led_on(uart);
+    // delete db just for testing purposes
+    fps_delete_all(uart);
 
     // enroll
-//    while(1){
-//        if(fps_is_finger_pressed_uart(uart)){
-//            fps_enroll_start(uart, 0);
-//            result res;
-//            res = fps_capture_finger(uart, 1);
-//            res = fps_enrolln(uart, 1);
-//            res = fps_capture_finger(uart, 1);
-//            res = fps_enrolln(uart, 2);
-//            res = fps_capture_finger(uart, 1);
-//            res = fps_enrolln(uart, 3);
-//            GPIO_write(LED_GREEN, res.res);
-//            break;
-//        }
-//        sleep(1);
-//    }
+
+    dword id = 8    ; // let's start with an id of 300
+
+    fps_led_on(uart);
+    while(1){
+        if(fps_is_finger_pressed_uart(uart)){
+            fps_enroll_start(uart, id);
+            result res;
+
+            // First enrollment
+            fps_led_on(uart);
+            res = fps_capture_finger(uart, 1);
+            res = fps_enrolln(uart, 1);
+            fps_led_off(uart);
+
+            // Second enrollment
+
+            waitUntilFingerReplaced(&uart);
+
+            fps_led_on(uart);
+            res = fps_capture_finger(uart, 1);
+            res = fps_enrolln(uart, 2);
+            fps_led_off(uart);
+
+            // Third and last enrollment
+
+            waitUntilFingerReplaced(&uart);
+
+            fps_led_on(uart);
+            res = fps_capture_finger(uart, 1);
+            res = fps_enrolln(uart, 3);
+            fps_led_off(uart);
+
+            GPIO_write(LED_GREEN, !res.res);
+            break;
+        }
+        usleep(POLL_PERIOD);
+    }
 
     // identify
+    fps_led_on(uart);
     while(1){
         if(fps_is_finger_pressed_uart(uart)){
             int amt = fps_enroll_count(uart);
-            result r = fps_check_enrolled(uart, 0);
-            result res = fps_identify(uart);
+            result res = fps_check_enrolled(uart, 0);
+            waitUntilFingerReplaced(&uart);
+            fps_led_on(uart);
+            res = fps_capture_finger(uart, 0);
+            res = fps_identify(uart);
+            GPIO_write(LED_GREEN, res.parameter == id);
             break;
         }
-        sleep(1);
+        usleep(POLL_PERIOD);
 
     }
+    fps_led_off(uart);
 }
 
+void waitUntilFingerReplaced(UART_Handle *handle){
+    int pressed = 1;
+
+    // blink to let the user know it is time to remove finger
+    fps_led_off(*handle);
+    sleep(1);
+    fps_led_on(*handle);
+
+    while (pressed){
+        pressed = fps_is_finger_pressed_uart(*handle);
+        usleep(POLL_PERIOD);
+    }
+
+    // blink to let the user know it is time to place finger
+    fps_led_off(*handle);
+    sleep(1);
+    fps_led_on(*handle);
+
+    while(!pressed){
+        pressed = fps_is_finger_pressed_uart(*handle);
+    }
+    return;
+}
 
