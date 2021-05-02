@@ -81,7 +81,8 @@ void *mainThread(void *arg0)
     }
     //GPIO_write(CONFIG_GPIO_LED_0, CONFIG_GPIO_LED_ON);
 
-
+    enroll(uart, id);
+    identify(uart, id);
 
 }
 
