@@ -13,6 +13,10 @@
 #include <ti/drivers/GPIO.h>
 #include <ti/drivers/UART.h>
 
+// Semaphores
+#include <ti/sysbios/knl/Semaphore.h>
+
+
 /* Driver configuration */
 //#include "ti_drivers_config.h"
 
@@ -25,6 +29,8 @@
 static useconds_t POLL_PERIOD = 200000;
 
 void waitUntilFingerReplaced(UART_Handle *handle);
+void enroll(UART_Handle uart,dword id);
+void identify(UART_Handle uart,dword id);
 
 /*
  *  ======== mainThread ========
@@ -36,7 +42,12 @@ void *mainThread(void *arg0)
     UART_Handle uart;
     UART_Params uartParams;
 
+    Semaphore_Handle sem;
+    Semaphore_Params semParams;
+    Semaphore_Params_init(&semParams);
 
+    sem = Semaphore_create(0,&semParams,NULL);
+    dword id = 8    ; // let's start with an id of 8
 
     /* Call driver init functions */
     GPIO_init();
@@ -70,66 +81,8 @@ void *mainThread(void *arg0)
     }
     //GPIO_write(CONFIG_GPIO_LED_0, CONFIG_GPIO_LED_ON);
 
-    // delete db just for testing purposes
-    fps_delete_all(uart);
 
-    // enroll
 
-    dword id = 8    ; // let's start with an id of 300
-
-    fps_led_on(uart);
-    while(1){
-        if(fps_is_finger_pressed_uart(uart)){
-            fps_enroll_start(uart, id);
-            result res;
-
-            // First enrollment
-            fps_led_on(uart);
-            res = fps_capture_finger(uart, 1);
-            res = fps_enrolln(uart, 1);
-            fps_led_off(uart);
-
-            // Second enrollment
-
-            waitUntilFingerReplaced(&uart);
-
-            fps_led_on(uart);
-            res = fps_capture_finger(uart, 1);
-            res = fps_enrolln(uart, 2);
-            fps_led_off(uart);
-
-            // Third and last enrollment
-
-            waitUntilFingerReplaced(&uart);
-
-            fps_led_on(uart);
-            res = fps_capture_finger(uart, 1);
-            res = fps_enrolln(uart, 3);
-            fps_led_off(uart);
-
-            GPIO_write(CONFIG_GPIO_LED_0, !res.res);
-            break;
-        }
-        usleep(POLL_PERIOD);
-    }
-
-    // identify
-    fps_led_on(uart);
-    while(1){
-        if(fps_is_finger_pressed_uart(uart)){
-            int amt = fps_enroll_count(uart);
-            result res = fps_check_enrolled(uart, 0);
-            waitUntilFingerReplaced(&uart);
-            fps_led_on(uart);
-            res = fps_capture_finger(uart, 0);
-            res = fps_identify(uart);
-            GPIO_write(LED_GREEN, res.parameter == id);
-            break;
-        }
-        usleep(POLL_PERIOD);
-
-    }
-    fps_led_off(uart);
 }
 
 void waitUntilFingerReplaced(UART_Handle *handle){
@@ -156,3 +109,68 @@ void waitUntilFingerReplaced(UART_Handle *handle){
     return;
 }
 
+void enroll(UART_Handle uart,dword id){
+    // delete db just for testing purposes
+       fps_delete_all(uart);
+
+       // enroll
+
+       fps_led_on(uart);
+       while(1){
+           if(fps_is_finger_pressed_uart(uart)){
+               fps_enroll_start(uart, id);
+               result res;
+
+               // First enrollment
+               fps_led_on(uart);
+               res = fps_capture_finger(uart, 1);
+               res = fps_enrolln(uart, 1);
+               fps_led_off(uart);
+
+               // Second enrollment
+
+               waitUntilFingerReplaced(&uart);
+
+               fps_led_on(uart);
+               res = fps_capture_finger(uart, 1);
+               res = fps_enrolln(uart, 2);
+               fps_led_off(uart);
+
+               // Third and last enrollment
+
+               waitUntilFingerReplaced(&uart);
+
+               fps_led_on(uart);
+               res = fps_capture_finger(uart, 1);
+               res = fps_enrolln(uart, 3);
+               fps_led_off(uart);
+
+               GPIO_write(CONFIG_GPIO_LED_0, !res.res);
+               break;
+           }
+           usleep(POLL_PERIOD);
+       }
+      return;
+}
+
+void identify(UART_Handle uart, dword id){
+    // identify
+    fps_led_on(uart);
+    while(1){
+        if(fps_is_finger_pressed_uart(uart)){
+            int amt = fps_enroll_count(uart);
+            result res = fps_check_enrolled(uart, 0);
+            waitUntilFingerReplaced(&uart);
+            fps_led_on(uart);
+            res = fps_capture_finger(uart, 0);
+            res = fps_identify(uart);
+            GPIO_write(LED_GREEN, res.parameter == id);
+            break;
+        }
+        usleep(POLL_PERIOD);
+
+    }
+    fps_led_off(uart);
+
+    return;
+}
