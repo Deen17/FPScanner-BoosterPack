@@ -77,12 +77,14 @@ void *mainThread(void *arg0)
 
     GPIO_write(CONFIG_GPIO_LED_0, CONFIG_GPIO_LED_OFF);
     if (fps_open(uart) == -1){
-        return(-1);
+        return (NULL);
     }
     //GPIO_write(CONFIG_GPIO_LED_0, CONFIG_GPIO_LED_ON);
 
     enroll(uart, id);
     identify(uart, id);
+
+    return (NULL);
 
 }
 

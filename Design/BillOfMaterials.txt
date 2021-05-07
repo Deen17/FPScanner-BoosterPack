@@ -1,0 +1,11 @@
+Quantity	Value	Package	Order code	Manufacturer	Manuf. Code	Availability	Price (from)	Description
+-------
+2   2x10 HEADERS 2x10	SAM15296-ND SAMTEC	SSW-110-23-F-D I found https://www.digikey.com/en/products/detail/SSW-110-23-F-D/SAM15296-ND/6692909?utm_campaign=buynow&utm_medium=aggregator&curr=usd&utm_source=octopart, which shows these 2x10 headers are in stock. Should only need 2 of these)
+-------
+
+Quantity	Value	Package	Order code	Manufacturer	Manuf. Code	Availability	Price (from)	Description
+2	10k	R0805	53W8524	PANASONIC	ERJ6GEYJ103V	50390	0.021	PANASONIC - ERJ6GEYJ103V - Surface Mount Chip Resistor, Thick Film, AEC-Q200 ERJ Series, 10 kohm, 125 mW, 5%, 150 V RoHS Compliant: Yes
+1	20k	R0805	65J1661	VISHAY	CRCW080520K0FKEB	6392	0.014	VISHAY - CRCW080520K0FKEB - SMD Chip Resistor, 20 kohm, ± 1%, 125 mW, 0805 [2012 Metric], Thick Film, General Purpose
+2		1X04_1MM_RA	87R0314	JST (JAPAN SOLDERLESS TERMINALS)	SM04B-SRSS-TB(LF)(SN)	8511	0.347	JST (JAPAN SOLDERLESS TERMINALS) - SM04B-SRSS-TB(LF)(SN) - Pin Header, Wire-to-Board, 1 mm, 1 Rows, 4 Contacts, Surface Mount, SH Series
+1	M3 Screws PRT-13227	Sparkfun	https://www.sparkfun.com/products/13227 
+4	M3 Nuts 
